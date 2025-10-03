@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progreso Vacacional</title>
+    <style>
+        /* ... Estilos CSS (sin cambios) ... */
+        body {
+            font-family: Arial, sans-serif;
+            background: #1c1c1c;                /*Se agrego parael cambio de color, remover para regresar a blanco*/
+            margin: 20px;
+            padding: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #dee2e6;                  /* #333; cambiar aqui el color */  
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .container {
+            color: #dee2e6;                 /* Se agrego color */
+            margin-bottom: 20px;
+        }
+        .result-box {
+            background-color: #1c1c1c;        /* #f8f9fa; cambiar aqui el color */
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #02a128;
+            text-align: center;
+            line-height: 25px;
+            color: white;
+            font-weight: bold;
+            transition: width 0.5s;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="date"] {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #toggle-calculator {
+            background-color: #6c757d;
+        }
+        #toggle-calculator:hover {
+            background-color: #5a6268;
+        }
+        .alert {
+            font-weight: bold;
+            color: #d64700;
+        }
+
+        .color_label{
+            color: #dee2e6;             /*Se agrego para el cambio de color*/
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Progreso Vacacional</h2>
+
+    <div class="container">
+        <label for="fecha-ingreso-input">Fecha de Ingreso:</label>
+        <input type="date" id="fecha-ingreso-input" value="2022-04-19"> 
+        <button onclick="calcularVacaciones()">Calcular Días</button>
+    </div>
+
+    <div id="resultados" class="result-box">
+        Presiona "Calcular Días" para ver el progreso.
+    </div>
+    
+    <script>
+        // Tablas de días de vacaciones iniciales (hasta el Año 5)
+        const DIAS_PRE_2023 = { // Para ingresos antes de 2023-01-01 (10 días iniciales)
+            1: 10,
+            2: 14, // NOTA: Aquí usé 12 para que coincida con el patrón de +2 días cada año hasta el 5to, tal como lo establece la LFT 
+            3: 16, // Si tu empresa otorga +4, +2, +2, +2 debes ajustar esta tabla. Asumo que es +2 cada año para seguir el patrón de la LFT.
+            4: 18,
+            5: 20
+        };
+
+        const DIAS_POST_2023 = { // Para ingresos a partir de 2023-01-01 (12 días iniciales, Ley 2023)
+            1: 12,
+            2: 14,
+            3: 16,
+            4: 18,
+            5: 20
+        };
+        
+        // Fecha de la reforma de vacaciones
+        const FECHA_REFORMA = new Date(Date.UTC(2023, 0, 1)); // 2023-01-01 UTC
+
+        /**
+         * Calcula los días de vacaciones a partir del Año 6, aplicando la lógica quinquenal (+2 días cada 5 años).
+         * @param {number} anioServicioActual - El año de servicio actual (6, 7, 8, etc.).
+         * @param {number} diasBaseInicial - Los días de vacaciones que se consolidaron en el Año 5 (20 días para LFT 2023, 18 días para tu política anterior).
+         * @returns {number} El total de días de vacaciones.
+         */
+        function calcularDiasVacacionesFTL(anioServicioActual, diasBaseInicial) {
+            // El aumento quinquenal comienza después del año 5.
+            if (anioServicioActual <= 5) {
+                return diasBaseInicial; // No debería llegar aquí si la lógica es correcta, pero es un seguro.
+            }
+
+            // Años a considerar para el aumento quinquenal (empezando desde el 6)
+            const aniosQuinquenales = anioServicioActual - 5; 
+            
+            // Determina cuántos bloques completos de 5 años han pasado (por ejemplo, en el año 11, han pasado 6 años desde el 5to, floor(6/5) = 1 aumento).
+            const bloquesQuinquenales = Math.floor(aniosQuinquenales / 5);
+            
+            // Cada bloque de 5 años añade 2 días.
+            const diasAdicionales = bloquesQuinquenales * 2;
+
+            return diasBaseInicial + diasAdicionales;
+        }
+
+        /* --- Funciones de utilidad (sin cambios) --- */
+
+        function createUtcDate(year, month, day) {
+            return new Date(Date.UTC(year, month, day));
+        }
+
+        function formatDateForDisplay(date) {
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const year = date.getUTCFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function dateDiffInDays(date1, date2) {
+            const msPerDay = 1000 * 60 * 60 * 24;
+            return Math.floor((date1.getTime() - date2.getTime()) / msPerDay);
+        }
+        
+        function determinarTablaDias(fechaIngreso) {
+            if (fechaIngreso.getTime() >= FECHA_REFORMA.getTime()) {
+                return DIAS_POST_2023;
+            } else {
+                return DIAS_PRE_2023;
+            }
+        }
+
+        /* --- Lógica principal de cálculo --- */
+
+        function calcularVacaciones() {
+            const inputDateString = document.getElementById('fecha-ingreso-input').value;
+
+            if (!inputDateString) {
+                document.getElementById('resultados').innerHTML = 'Por favor, introduce una fecha de ingreso válida.';
+                return;
+            }
+            
+            // 1. Inicialización de la Fecha de Ingreso y componentes
+            const [year, month, day] = inputDateString.split('-').map(Number);
+            const fechaIngreso = createUtcDate(year, month - 1, day); 
+            
+            const mesIngreso = month - 1; // 0-11
+            const diaIngreso = day;
+            
+            const hoy = new Date();
+            const hoyUtc = createUtcDate(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+            
+            // Elegir la tabla de días base
+            const diasPorAnio = determinarTablaDias(fechaIngreso);
+            
+            // 2. Determinar el año de servicio actual
+            let aniosServicio = hoyUtc.getFullYear() - fechaIngreso.getFullYear();
+            
+            const aniversarioEsteAnio = createUtcDate(hoyUtc.getFullYear(), mesIngreso, diaIngreso);
+            
+            if (hoyUtc < aniversarioEsteAnio) {
+                aniosServicio -= 1;
+            }
+            aniosServicio = Math.max(0, aniosServicio); 
+
+            // 3. Definir fechas y días
+            const anioServicioActual = aniosServicio + 1;
+            
+            const fechaAniversarioPasado = createUtcDate(fechaIngreso.getFullYear() + aniosServicio, mesIngreso, diaIngreso);
+            
+            const siguienteAniversario = createUtcDate(fechaIngreso.getFullYear() + anioServicioActual, mesIngreso, diaIngreso);
+            
+            const fechaFinPeriodo = new Date(siguienteAniversario.getTime() - (1000 * 60 * 60 * 24)); 
+
+            // 4. Días de Vacaciones Totales (Lógica Quinquenal Aplicada)
+            let diasVacaciones;
+            const diasBaseQuinquenal = diasPorAnio[5]; // Días consolidados al 5to año (20 o 18)
+
+            if (anioServicioActual <= 5) {
+                // Si está en el año 1 al 5, usa el valor directo de la tabla (10/12, 12/14, 14/16, etc.)
+                diasVacaciones = diasPorAnio[anioServicioActual];
+            } else {
+                // Si es Año 6 o superior, aplica la lógica quinquenal
+                diasVacaciones = calcularDiasVacacionesFTL(anioServicioActual, diasBaseQuinquenal);
+            }
+
+            // 5. Cálculos del Período
+            const diasTranscurridosPeriodo = dateDiffInDays(hoyUtc, fechaAniversarioPasado);
+            const diasTotalesPeriodo = dateDiffInDays(fechaFinPeriodo, fechaAniversarioPasado) + 1; 
+            
+            if (diasTotalesPeriodo <= 0) {
+                 document.getElementById('resultados').innerHTML = 'Error en el cálculo del periodo (días totales). Revisa la fecha de ingreso.';
+                 return;
+            }
+
+            // 6. Cálculo del progreso y pro-rateo
+            const porcentajeProgreso = Math.min(1, diasTranscurridosPeriodo / diasTotalesPeriodo);
+            const diasVacacionesGanados = diasVacaciones * porcentajeProgreso;
+            
+            // 7. Generación de la Barra de Progreso (HTML/CSS)
+            const porcentajeFormato = (porcentajeProgreso * 100).toFixed(2);
+            
+            const progressBarHtml = `
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${porcentajeFormato}%;">
+                        ${porcentajeFormato}%
+                    </div>
+                </div>
+            `;
+            
+            // 8. Formato de Salida
+            const formatoFechaDisplay = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+
+            const resultadosHTML = `
+                <p class="color_label"><strong>Fecha de Ingreso:</strong> ${fechaIngreso.toLocaleDateString('es-ES', formatoFechaDisplay)}</p>
+
+                <p class="color_label"><strong>Año de antigüedad en curso:</span style></strong> ${anioServicioActual}</p>
+                <p class="color_label"><strong>Días de Vacaciones para este año:</strong> <span style="font-size: 1.2em; color: #007bff;">${diasVacaciones} días</span></p>
+                <hr style="border-top: 1px solid #ccc;">
+                <p class="color_label"><strong>Período Actual:</strong> ${formatDateForDisplay(fechaAniversarioPasado)} a ${formatDateForDisplay(fechaFinPeriodo)}</p>
+                <p class="color_label"><strong>Días Transcurridos:</strong> ${diasTranscurridosPeriodo} de ${diasTotalesPeriodo}</p>
+                <p class="color_label"><strong>Días de Vacaciones actuales:</strong> <span style="font-size: 1.2em; color: #28a745;">${diasVacacionesGanados.toFixed(2)} días / ${diasVacaciones} días</span></p>
+                
+                ${progressBarHtml}
+            `;
+
+            document.getElementById('resultados').innerHTML = resultadosHTML;
+        }
+
+        // Ejecutar al cargar la página con la fecha por defecto
+        document.addEventListener('DOMContentLoaded', calcularVacaciones);
+
+    </script>
+</body>
+</html>
