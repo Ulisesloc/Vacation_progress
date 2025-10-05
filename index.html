@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progreso Vacacional</title>
     <style>
-        /* ... Estilos CSS (sin cambios) ... */
+        /* Estilos Base y de Contenedor */
         body {
             font-family: Arial, sans-serif;
-            background: #1c1c1c;                /*Se agrego parael cambio de color, remover para regresar a blanco*/
+            background: #1c1c1c;            
             margin: 20px;
             padding: 20px;
             max-width: 600px;
@@ -19,16 +19,16 @@
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         }
         h2 {
-            color: #dee2e6;                  /* #333; cambiar aqui el color */  
+            color: #dee2e6;              
             border-bottom: 2px solid #007bff;
             padding-bottom: 5px;
         }
         .container {
-            color: #dee2e6;                 /* Se agrego color */
+            color: #dee2e6;              
             margin-bottom: 20px;
         }
         .result-box {
-            background-color: #1c1c1c;        /* #f8f9fa; cambiar aqui el color */
+            background-color: #2a2a2a;        /* Fondo más oscuro para caja de resultados */
             border: 1px solid #dee2e6;
             padding: 15px;
             border-radius: 4px;
@@ -36,7 +36,7 @@
         .progress-bar {
             width: 100%;
             height: 25px;
-            background-color: #e9ecef;
+            background-color: #555; /* Fondo de la barra */
             border-radius: 4px;
             margin-top: 10px;
             overflow: hidden;
@@ -62,6 +62,8 @@
             box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 4px;
+            background-color: #444; /* color de fondo del input */
+            color: #dee2e6;
         }
         button {
             background-color: #007bff;
@@ -75,19 +77,52 @@
         button:hover {
             background-color: #0056b3;
         }
-        #toggle-calculator {
-            background-color: #6c757d;
-        }
-        #toggle-calculator:hover {
-            background-color: #5a6268;
-        }
-        .alert {
-            font-weight: bold;
-            color: #d64700;
+        .color_label{
+            color: #dee2e6;            
         }
 
-        .color_label{
-            color: #dee2e6;             /*Se agrego para el cambio de color*/
+        /* ESTILOS PARA EL DESPLEGABLE */
+        .toggle-section {
+            margin-top: 15px;
+            cursor: pointer;
+            color: #0056b3; /* Color llamativo para el botón */
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #555;
+            padding-top: 10px;
+            user-select: none; /* Evita que se seleccione el texto */
+        }
+
+        .toggle-section:hover {
+            color: #ffffff;
+        }
+
+        .vacation-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+            padding-top: 0;
+        }
+        
+        .vacation-detail.open {
+            max-height: 500px; /* Suficiente espacio para el contenido */
+            padding-top: 10px;
+        }
+        
+        #accumulation-dates {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #3a3a3a;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-line; /* Permite saltos de línea y formateo */
+            line-height: 1.6;
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            text-align: center;
         }
     </style>
 </head>
@@ -105,12 +140,23 @@
         Presiona "Calcular Días" para ver el progreso.
     </div>
     
+    <div id="additional-info-container" class="result-box" style="margin-top: 15px; display: none;">
+        <div class="toggle-section" onclick="toggleDetails()">
+            + Información: Fechas de Acumulación Diaria 
+            <span id="toggle-icon">▼</span>
+        </div>
+        
+        <div id="vacation-detail" class="vacation-detail">
+            <div id="accumulation-dates"></div>
+        </div>
+    </div>
+    
     <script>
         // Tablas de días de vacaciones iniciales (hasta el Año 5)
         const DIAS_PRE_2023 = { // Para ingresos antes de 2023-01-01 (10 días iniciales)
             1: 10,
-            2: 14, // NOTA: Aquí usé 12 para que coincida con el patrón de +2 días cada año hasta el 5to, tal como lo establece la LFT 
-            3: 16, // Si tu empresa otorga +4, +2, +2, +2 debes ajustar esta tabla. Asumo que es +2 cada año para seguir el patrón de la LFT.
+            2: 14, 
+            3: 16,
             4: 18,
             5: 20
         };
@@ -127,43 +173,52 @@
         const FECHA_REFORMA = new Date(Date.UTC(2023, 0, 1)); // 2023-01-01 UTC
 
         /**
-         * Calcula los días de vacaciones a partir del Año 6, aplicando la lógica quinquenal (+2 días cada 5 años).
-         * @param {number} anioServicioActual - El año de servicio actual (6, 7, 8, etc.).
-         * @param {number} diasBaseInicial - Los días de vacaciones que se consolidaron en el Año 5 (20 días para LFT 2023, 18 días para tu política anterior).
-         * @returns {number} El total de días de vacaciones.
+         * Calcula los días de vacaciones a partir del Año 6, aplicando la lógica quinquenal.
          */
         function calcularDiasVacacionesFTL(anioServicioActual, diasBaseInicial) {
-            // El aumento quinquenal comienza después del año 5.
             if (anioServicioActual <= 5) {
-                return diasBaseInicial; // No debería llegar aquí si la lógica es correcta, pero es un seguro.
+                return diasBaseInicial;
             }
 
-            // Años a considerar para el aumento quinquenal (empezando desde el 6)
             const aniosQuinquenales = anioServicioActual - 5; 
-            
-            // Determina cuántos bloques completos de 5 años han pasado (por ejemplo, en el año 11, han pasado 6 años desde el 5to, floor(6/5) = 1 aumento).
             const bloquesQuinquenales = Math.floor(aniosQuinquenales / 5);
-            
-            // Cada bloque de 5 años añade 2 días.
             const diasAdicionales = bloquesQuinquenales * 2;
 
             return diasBaseInicial + diasAdicionales;
         }
 
-        /* --- Funciones de utilidad (sin cambios) --- */
+        /* --- Funciones de utilidad --- */
 
         function createUtcDate(year, month, day) {
+            // Crea una fecha UTC al inicio del día
             return new Date(Date.UTC(year, month, day));
+        }
+        
+        function addDays(date, days) {
+            // Suma días a una fecha UTC
+            const result = new Date(date);
+            result.setUTCDate(result.getUTCDate() + days);
+            return result;
         }
 
         function formatDateForDisplay(date) {
+            // Formato DD/MM/YYYY
             const day = String(date.getUTCDate()).padStart(2, '0');
             const month = String(date.getUTCMonth() + 1).padStart(2, '0');
             const year = date.getUTCFullYear();
             return `${day}/${month}/${year}`;
         }
+        
+        function formatDateForList(date) {
+            // Formato M/D/YYYY (como en el ejemplo 5/9/2025)
+            const day = date.getUTCDate();
+            const month = date.getUTCMonth() + 1;
+            const year = date.getUTCFullYear();
+            return `${month}/${day}/${year}`;
+        }
 
         function dateDiffInDays(date1, date2) {
+            // Calcula la diferencia de días entre dos fechas UTC
             const msPerDay = 1000 * 60 * 60 * 24;
             return Math.floor((date1.getTime() - date2.getTime()) / msPerDay);
         }
@@ -176,6 +231,42 @@
             }
         }
 
+        /**
+         * Calcula y muestra las fechas exactas en que se acumula cada día de vacaciones.
+         */
+        function mostrarFechasAcumulacion(fechaInicioPeriodo, diasVacacionesTotales, diasTotalesPeriodo) {
+            const diasAcumularUnDia = diasTotalesPeriodo / diasVacacionesTotales;
+            let output = '';
+            
+            if (diasVacacionesTotales <= 0 || diasTotalesPeriodo <= 0) {
+                document.getElementById("accumulation-dates").innerText = "No aplica acumulación de días.";
+                return;
+            }
+
+            for (let i = 1; i <= diasVacacionesTotales; i++) {
+                // Se redondea el número de días transcurridos para acumular el día 'i'.
+                // Se suma 1 día extra para que el primer día acumulado caiga en el día 20 (para 365/18), coincidiendo con el patrón que proporcionaste.
+                const diasParaAcumularAjustado = Math.round(diasAcumularUnDia * i) + 1;
+                
+                const fechaAcumulacion = addDays(fechaInicioPeriodo, diasParaAcumularAjustado);
+                
+                output += `${formatDateForList(fechaAcumulacion)} - ${i} día.\n`;
+            }
+            document.getElementById("accumulation-dates").innerText = output;
+        }
+
+        /**
+         * Maneja el despliegue del panel de información adicional.
+         */
+        function toggleDetails() {
+            const detailDiv = document.getElementById('vacation-detail');
+            const iconSpan = document.getElementById('toggle-icon');
+            detailDiv.classList.toggle('open');
+            // Cambia el ícono para indicar si está abierto (▲) o cerrado (▼)
+            iconSpan.innerText = detailDiv.classList.contains('open') ? '▲' : '▼';
+        }
+
+
         /* --- Lógica principal de cálculo --- */
 
         function calcularVacaciones() {
@@ -183,10 +274,11 @@
 
             if (!inputDateString) {
                 document.getElementById('resultados').innerHTML = 'Por favor, introduce una fecha de ingreso válida.';
+                document.getElementById('additional-info-container').style.display = 'none';
                 return;
             }
             
-            // 1. Inicialización de la Fecha de Ingreso y componentes
+            // 1. Inicialización de la Fecha de Ingreso y componentes (en UTC)
             const [year, month, day] = inputDateString.split('-').map(Number);
             const fechaIngreso = createUtcDate(year, month - 1, day); 
             
@@ -220,13 +312,11 @@
 
             // 4. Días de Vacaciones Totales (Lógica Quinquenal Aplicada)
             let diasVacaciones;
-            const diasBaseQuinquenal = diasPorAnio[5]; // Días consolidados al 5to año (20 o 18)
+            const diasBaseQuinquenal = diasPorAnio[5]; 
 
             if (anioServicioActual <= 5) {
-                // Si está en el año 1 al 5, usa el valor directo de la tabla (10/12, 12/14, 14/16, etc.)
                 diasVacaciones = diasPorAnio[anioServicioActual];
             } else {
-                // Si es Año 6 o superior, aplica la lógica quinquenal
                 diasVacaciones = calcularDiasVacacionesFTL(anioServicioActual, diasBaseQuinquenal);
             }
 
@@ -235,13 +325,16 @@
             const diasTotalesPeriodo = dateDiffInDays(fechaFinPeriodo, fechaAniversarioPasado) + 1; 
             
             if (diasTotalesPeriodo <= 0) {
-                 document.getElementById('resultados').innerHTML = 'Error en el cálculo del periodo (días totales). Revisa la fecha de ingreso.';
-                 return;
+                document.getElementById('resultados').innerHTML = 'Error en el cálculo del periodo (días totales). Revisa la fecha de ingreso.';
+                document.getElementById('additional-info-container').style.display = 'none';
+                return;
             }
 
             // 6. Cálculo del progreso y pro-rateo
             const porcentajeProgreso = Math.min(1, diasTranscurridosPeriodo / diasTotalesPeriodo);
             const diasVacacionesGanados = diasVacaciones * porcentajeProgreso;
+            
+            const diasAcumularDia = (diasTotalesPeriodo / diasVacaciones);
             
             // 7. Generación de la Barra de Progreso (HTML/CSS)
             const porcentajeFormato = (porcentajeProgreso * 100).toFixed(2);
@@ -260,17 +353,24 @@
             const resultadosHTML = `
                 <p class="color_label"><strong>Fecha de Ingreso:</strong> ${fechaIngreso.toLocaleDateString('es-ES', formatoFechaDisplay)}</p>
 
-                <p class="color_label"><strong>Año de antigüedad en curso:</span style></strong> ${anioServicioActual}</p>
-                <p class="color_label"><strong>Días de Vacaciones para este año:</strong> <span style="font-size: 1.2em; color: #007bff;">${diasVacaciones} días</span></p>
-                <hr style="border-top: 1px solid #ccc;">
+                <p class="color_label"><strong>Año de antigüedad en curso:</strong> ${anioServicioActual}</p>
+                <p class="color_label"><strong>Vacaciones para este año:</strong> <span style="font-size: 1.2em; color: #007bff;">${diasVacaciones} días</span></p>
+                <hr style="border-top: 1px solid #555;">
                 <p class="color_label"><strong>Período Actual:</strong> ${formatDateForDisplay(fechaAniversarioPasado)} a ${formatDateForDisplay(fechaFinPeriodo)}</p>
                 <p class="color_label"><strong>Días Transcurridos:</strong> ${diasTranscurridosPeriodo} de ${diasTotalesPeriodo}</p>
-                <p class="color_label"><strong>Días de Vacaciones actuales:</strong> <span style="font-size: 1.2em; color: #28a745;">${diasVacacionesGanados.toFixed(2)} días / ${diasVacaciones} días</span></p>
+
+                <p class="color_label"><strong>Día de vacacion generado cada:</strong> ${diasAcumularDia.toFixed(2)} días</p>
+
+                <p class="color_label"><strong>Vacaciones actuales:</strong> <span style="font-size: 1.2em; color: #28a745;">${diasVacacionesGanados.toFixed(2)} días / ${diasVacaciones} días</span></p>
                 
                 ${progressBarHtml}
             `;
 
             document.getElementById('resultados').innerHTML = resultadosHTML;
+            document.getElementById('additional-info-container').style.display = 'block';
+
+            // 9. Generación de Fechas de Acumulación
+            mostrarFechasAcumulacion(fechaAniversarioPasado, diasVacaciones, diasTotalesPeriodo);
         }
 
         // Ejecutar al cargar la página con la fecha por defecto
