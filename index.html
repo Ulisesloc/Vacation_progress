@@ -142,7 +142,7 @@
     
     <div id="additional-info-container" class="result-box" style="margin-top: 15px; display: none;">
         <div class="toggle-section" onclick="toggleDetails()">
-            + Información: Fechas de Acumulación Diaria 
+            + Información: 
             <span id="toggle-icon">▼</span>
         </div>
         
@@ -210,7 +210,7 @@
         }
         
         function formatDateForList(date) {
-            // Formato M/D/YYYY (como en el ejemplo 5/9/2025)
+            // Formato D/M/YYYY (como en el ejemplo 5/9/2025)
             const day = date.getUTCDate();
             const month = date.getUTCMonth() + 1;
             const year = date.getUTCFullYear();
@@ -245,8 +245,7 @@
 
             for (let i = 1; i <= diasVacacionesTotales; i++) {
                 // Se redondea el número de días transcurridos para acumular el día 'i'.
-                // Se suma 1 día extra para que el primer día acumulado caiga en el día 20 (para 365/18), coincidiendo con el patrón que proporcionaste.
-                const diasParaAcumularAjustado = Math.round(diasAcumularUnDia * i) + 1;
+                const diasParaAcumularAjustado = Math.round(diasAcumularUnDia * i);
                 
                 const fechaAcumulacion = addDays(fechaInicioPeriodo, diasParaAcumularAjustado);
                 
@@ -352,17 +351,15 @@
 
             const resultadosHTML = `
                 <p class="color_label"><strong>Fecha de Ingreso:</strong> ${fechaIngreso.toLocaleDateString('es-ES', formatoFechaDisplay)}</p>
-
                 <p class="color_label"><strong>Año de antigüedad en curso:</strong> ${anioServicioActual}</p>
                 <p class="color_label"><strong>Vacaciones para este año:</strong> <span style="font-size: 1.2em; color: #007bff;">${diasVacaciones} días</span></p>
                 <hr style="border-top: 1px solid #555;">
                 <p class="color_label"><strong>Período Actual:</strong> ${formatDateForDisplay(fechaAniversarioPasado)} a ${formatDateForDisplay(fechaFinPeriodo)}</p>
                 <p class="color_label"><strong>Días Transcurridos:</strong> ${diasTranscurridosPeriodo} de ${diasTotalesPeriodo}</p>
-
                 <p class="color_label"><strong>Día de vacacion generado cada:</strong> ${diasAcumularDia.toFixed(2)} días</p>
-
                 <p class="color_label"><strong>Vacaciones actuales:</strong> <span style="font-size: 1.2em; color: #28a745;">${diasVacacionesGanados.toFixed(2)} días / ${diasVacaciones} días</span></p>
-                
+                <P class="color_label"><strong>Dias generados por dia:</storng> <span style="font-size: 1em; color: #007bff;">    días</span></p>
+
                 ${progressBarHtml}
             `;
 
