@@ -44,7 +44,7 @@
         }
         .progress-fill {
             height: 100%;
-            background-color: #02a128;
+            background-color: #0267a1;
             text-align: center;
             line-height: 25px;
             color: white;
@@ -75,7 +75,7 @@
             margin-top: 15px;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #007bff;
         }
         .color_label{
             color: #dee2e6;            
@@ -118,17 +118,31 @@
             padding: 10px;
             border-radius: 5px;
             margin-top: 10px;
-            white-space: pre-line; /* Permite saltos de línea y formateo */
-            line-height: 1.6;
+            line-height: 1.8; /* Aumentado para mejor visualización */
             font-size: 0.95rem;
             color: #e0e0e0;
             text-align: center;
+            /* Importante: Revertimos white-space a normal si usamos <br> */
+            white-space: normal;
+        }
+        
+        /* ✨ ESTILO PARA RESALTAR EL PRÓXIMO DÍA ✨ */
+        .next-accumulation {
+            color: #e0e0e0; /* Color verde brillante para resaltar */
+            font-weight: bold;
+            background-color: #007bff70; /* Fondo suave para destacar la línea completa */
+            padding: 2px 5px;
+            border-radius: 3px;
+            display: inline-block; /* Cambiado a inline-block para que el ancho se ajuste */
+            width: 90%; /* Ajuste de ancho para centrar */
+            margin: 0 auto; /* Centrar el bloque */
+            border: 1px solid #ffffff;
         }
     </style>
 </head>
 <body>
 
-    <h2>Progreso Vacacional</h2>
+    <h2>Vacaciones</h2>
 
     <div class="container">
         <label for="fecha-ingreso-input">Fecha de Ingreso:</label>
@@ -142,7 +156,7 @@
     
     <div id="additional-info-container" class="result-box" style="margin-top: 15px; display: none;">
         <div class="toggle-section" onclick="toggleDetails()">
-            + Información: 
+            + Información:
             <span id="toggle-icon">▼</span>
         </div>
         
@@ -153,56 +167,39 @@
     
     <script>
         // Tablas de días de vacaciones iniciales (hasta el Año 5)
-        const DIAS_PRE_2023 = { // Para ingresos antes de 2023-01-01 (10 días iniciales)
-            1: 10,
-            2: 14, 
-            3: 16,
-            4: 18,
-            5: 20
+        const DIAS_PRE_2023 = { 
+            1: 10, 2: 14, 3: 16, 4: 18, 5: 20
         };
 
-        const DIAS_POST_2023 = { // Para ingresos a partir de 2023-01-01 (12 días iniciales, Ley 2023)
-            1: 12,
-            2: 14,
-            3: 16,
-            4: 18,
-            5: 20
+        const DIAS_POST_2023 = { 
+            1: 12, 2: 14, 3: 16, 4: 18, 5: 20
         };
         
-        // Fecha de la reforma de vacaciones
-        const FECHA_REFORMA = new Date(Date.UTC(2023, 0, 1)); // 2023-01-01 UTC
+        const FECHA_REFORMA = new Date(Date.UTC(2023, 0, 1));
 
-        /**
-         * Calcula los días de vacaciones a partir del Año 6, aplicando la lógica quinquenal.
-         */
+        /* --- Funciones de lógica de vacaciones --- */
+
         function calcularDiasVacacionesFTL(anioServicioActual, diasBaseInicial) {
-            if (anioServicioActual <= 5) {
-                return diasBaseInicial;
-            }
-
+            if (anioServicioActual <= 5) return diasBaseInicial;
             const aniosQuinquenales = anioServicioActual - 5; 
             const bloquesQuinquenales = Math.floor(aniosQuinquenales / 5);
             const diasAdicionales = bloquesQuinquenales * 2;
-
             return diasBaseInicial + diasAdicionales;
         }
 
-        /* --- Funciones de utilidad --- */
+        /* --- Funciones de utilidad de fechas --- */
 
         function createUtcDate(year, month, day) {
-            // Crea una fecha UTC al inicio del día
             return new Date(Date.UTC(year, month, day));
         }
         
         function addDays(date, days) {
-            // Suma días a una fecha UTC
             const result = new Date(date);
             result.setUTCDate(result.getUTCDate() + days);
             return result;
         }
 
         function formatDateForDisplay(date) {
-            // Formato DD/MM/YYYY
             const day = String(date.getUTCDate()).padStart(2, '0');
             const month = String(date.getUTCMonth() + 1).padStart(2, '0');
             const year = date.getUTCFullYear();
@@ -210,7 +207,7 @@
         }
         
         function formatDateForList(date) {
-            // Formato D/M/YYYY (como en el ejemplo 5/9/2025)
+            // Formato D/M/YYYY
             const day = date.getUTCDate();
             const month = date.getUTCMonth() + 1;
             const year = date.getUTCFullYear();
@@ -218,40 +215,46 @@
         }
 
         function dateDiffInDays(date1, date2) {
-            // Calcula la diferencia de días entre dos fechas UTC
             const msPerDay = 1000 * 60 * 60 * 24;
             return Math.floor((date1.getTime() - date2.getTime()) / msPerDay);
         }
         
         function determinarTablaDias(fechaIngreso) {
-            if (fechaIngreso.getTime() >= FECHA_REFORMA.getTime()) {
-                return DIAS_POST_2023;
-            } else {
-                return DIAS_PRE_2023;
-            }
+            return (fechaIngreso.getTime() >= FECHA_REFORMA.getTime()) ? DIAS_POST_2023 : DIAS_PRE_2023;
         }
 
         /**
-         * Calcula y muestra las fechas exactas en que se acumula cada día de vacaciones.
+         * Calcula, genera la lista y RESALTA la próxima fecha de acumulación.
          */
         function mostrarFechasAcumulacion(fechaInicioPeriodo, diasVacacionesTotales, diasTotalesPeriodo) {
+            const hoyUtc = createUtcDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
             const diasAcumularUnDia = diasTotalesPeriodo / diasVacacionesTotales;
-            let output = '';
+            let outputHtml = '';
+            let isNextFound = false;
             
             if (diasVacacionesTotales <= 0 || diasTotalesPeriodo <= 0) {
-                document.getElementById("accumulation-dates").innerText = "No aplica acumulación de días.";
+                document.getElementById("accumulation-dates").innerHTML = "No aplica acumulación de días.";
                 return;
             }
 
             for (let i = 1; i <= diasVacacionesTotales; i++) {
-                // Se redondea el número de días transcurridos para acumular el día 'i'.
-                const diasParaAcumularAjustado = Math.round(diasAcumularUnDia * i);
+                const diasParaAcumular = Math.round(diasAcumularUnDia * i);
+                const fechaAcumulacion = addDays(fechaInicioPeriodo, diasParaAcumular);
                 
-                const fechaAcumulacion = addDays(fechaInicioPeriodo, diasParaAcumularAjustado);
+                let className = '';
+                if (!isNextFound && fechaAcumulacion.getTime() >= hoyUtc.getTime()) {
+                    className = 'next-accumulation';
+                    isNextFound = true;
+                }
                 
-                output += `${formatDateForList(fechaAcumulacion)} - ${i} día.\n`;
+                // Generamos el <span> para la línea
+                const lineContent = `<span class="${className}">${formatDateForList(fechaAcumulacion)} - Día ${i}°</span>`;
+
+                // Añadimos el contenido y el salto de línea HTML (<br>)
+                outputHtml += lineContent + '<br>';
             }
-            document.getElementById("accumulation-dates").innerText = output;
+            
+            document.getElementById("accumulation-dates").innerHTML = outputHtml;
         }
 
         /**
@@ -261,7 +264,6 @@
             const detailDiv = document.getElementById('vacation-detail');
             const iconSpan = document.getElementById('toggle-icon');
             detailDiv.classList.toggle('open');
-            // Cambia el ícono para indicar si está abierto (▲) o cerrado (▼)
             iconSpan.innerText = detailDiv.classList.contains('open') ? '▲' : '▼';
         }
 
@@ -281,38 +283,29 @@
             const [year, month, day] = inputDateString.split('-').map(Number);
             const fechaIngreso = createUtcDate(year, month - 1, day); 
             
-            const mesIngreso = month - 1; // 0-11
+            const mesIngreso = month - 1; 
             const diaIngreso = day;
             
             const hoy = new Date();
             const hoyUtc = createUtcDate(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
             
-            // Elegir la tabla de días base
             const diasPorAnio = determinarTablaDias(fechaIngreso);
             
             // 2. Determinar el año de servicio actual
             let aniosServicio = hoyUtc.getFullYear() - fechaIngreso.getFullYear();
-            
             const aniversarioEsteAnio = createUtcDate(hoyUtc.getFullYear(), mesIngreso, diaIngreso);
-            
-            if (hoyUtc < aniversarioEsteAnio) {
-                aniosServicio -= 1;
-            }
+            if (hoyUtc < aniversarioEsteAnio) aniosServicio -= 1;
             aniosServicio = Math.max(0, aniosServicio); 
 
             // 3. Definir fechas y días
             const anioServicioActual = aniosServicio + 1;
-            
             const fechaAniversarioPasado = createUtcDate(fechaIngreso.getFullYear() + aniosServicio, mesIngreso, diaIngreso);
-            
             const siguienteAniversario = createUtcDate(fechaIngreso.getFullYear() + anioServicioActual, mesIngreso, diaIngreso);
-            
             const fechaFinPeriodo = new Date(siguienteAniversario.getTime() - (1000 * 60 * 60 * 24)); 
 
-            // 4. Días de Vacaciones Totales (Lógica Quinquenal Aplicada)
+            // 4. Días de Vacaciones Totales
             let diasVacaciones;
             const diasBaseQuinquenal = diasPorAnio[5]; 
-
             if (anioServicioActual <= 5) {
                 diasVacaciones = diasPorAnio[anioServicioActual];
             } else {
@@ -332,8 +325,8 @@
             // 6. Cálculo del progreso y pro-rateo
             const porcentajeProgreso = Math.min(1, diasTranscurridosPeriodo / diasTotalesPeriodo);
             const diasVacacionesGanados = diasVacaciones * porcentajeProgreso;
-            
             const diasAcumularDia = (diasTotalesPeriodo / diasVacaciones);
+            const diasPorDia = (diasVacaciones / diasTotalesPeriodo);
             
             // 7. Generación de la Barra de Progreso (HTML/CSS)
             const porcentajeFormato = (porcentajeProgreso * 100).toFixed(2);
@@ -358,8 +351,7 @@
                 <p class="color_label"><strong>Días Transcurridos:</strong> ${diasTranscurridosPeriodo} de ${diasTotalesPeriodo}</p>
                 <p class="color_label"><strong>Día de vacacion generado cada:</strong> ${diasAcumularDia.toFixed(2)} días</p>
                 <p class="color_label"><strong>Vacaciones actuales:</strong> <span style="font-size: 1.2em; color: #28a745;">${diasVacacionesGanados.toFixed(2)} días / ${diasVacaciones} días</span></p>
-                <P class="color_label"><strong>Dias generados por dia:</storng> <span style="font-size: 1em; color: #007bff;">    días</span></p>
-
+                <p class="color_label"><strong>Días generados por día:</strong> <span style="font-size: 1em; color: #007bff;"> ${diasPorDia.toFixed(4)} días</span></p>
                 ${progressBarHtml}
             `;
 
