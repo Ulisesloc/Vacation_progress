@@ -44,7 +44,7 @@
         }
         .progress-fill {
             height: 100%;
-            background-color: #0267a1;
+            background-color: #007bff;
             text-align: center;
             line-height: 25px;
             color: white;
@@ -56,7 +56,8 @@
             margin-top: 10px;
             font-weight: bold;
         }
-        input[type="date"] {
+        input[type="date"],
+        input[type="number"] {
             padding: 8px;
             width: 100%;
             box-sizing: border-box;
@@ -64,6 +65,13 @@
             border-radius: 4px;
             background-color: #444; /* color de fondo del input */
             color: #dee2e6;
+            margin-top: 4px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
         }
         button {
             background-color: #007bff;
@@ -72,12 +80,21 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 15px;
+            font-size: 0.95rem;
         }
         button:hover {
-            background-color: #007bff;
+            background-color: #0056b3;
         }
-        .color_label{
+        .btn-secondary {
+            background-color: #343a40;
+            border: 1px solid #007bff;
+            color: #dee2e6;
+        }
+        .btn-secondary:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        .color_label {
             color: #dee2e6;            
         }
 
@@ -85,7 +102,7 @@
         .toggle-section {
             margin-top: 15px;
             cursor: pointer;
-            color: #0056b3; /* Color llamativo para el botón */
+            color: #007bff; /* Color llamativo para el botón */
             font-weight: bold;
             display: flex;
             justify-content: space-between;
@@ -112,31 +129,153 @@
         }
         
         #accumulation-dates {
+            position: relative;
             max-height: 200px;
             overflow-y: auto;
             background: #3a3a3a;
             padding: 10px;
             border-radius: 5px;
             margin-top: 10px;
-            line-height: 1.8; /* Aumentado para mejor visualización */
+            line-height: 1.8;
             font-size: 0.95rem;
             color: #e0e0e0;
             text-align: center;
-            /* Importante: Revertimos white-space a normal si usamos <br> */
             white-space: normal;
+            scroll-behavior: smooth;
         }
         
         /* ✨ ESTILO PARA RESALTAR EL PRÓXIMO DÍA ✨ */
         .next-accumulation {
-            color: #e0e0e0; /* Color verde brillante para resaltar */
+            color: #e0e0e0;
             font-weight: bold;
-            background-color: #007bff70; /* Fondo suave para destacar la línea completa */
+            background-color: #007bff;
             padding: 2px 5px;
             border-radius: 3px;
-            display: inline-block; /* Cambiado a inline-block para que el ancho se ajuste */
-            width: 90%; /* Ajuste de ancho para centrar */
-            margin: 0 auto; /* Centrar el bloque */
+            display: inline-block;
+            width: 90%;
+            margin: 0 auto;
             border: 1px solid #ffffff;
+        }
+
+        /* ✨ ESTILOS DEL MODAL DE FESTIVOS Y PUENTES ✨ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.78);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: #2a2a2a;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 540px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            color: #dee2e6;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            border-bottom: 2px solid #007bff;
+        }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: #ffffff;
+        }
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: #dee2e6;
+            font-size: 1.5rem;
+            line-height: 1;
+            padding: 0 6px;
+            cursor: pointer;
+        }
+        .modal-close:hover {
+            background: transparent;
+            color: #ff6b6b;
+        }
+        .modal-body {
+            padding: 15px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        .modal-note {
+            font-size: 0.85rem;
+            color: #adb5bd;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+        .holiday-card {
+            background-color: #363636;
+            border-left: 4px solid #007bff;
+            border-radius: 5px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+        .holiday-card.past {
+            opacity: 0.55;
+            border-left-color: #6c757d;
+        }
+        .holiday-card.upcoming {
+            border-left-color: #28a745;
+            border: 1px solid #28a745;
+            border-left-width: 5px;
+            background-color: #2f3b32;
+        }
+        .holiday-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .holiday-date {
+            font-weight: bold;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+        .badge-next {
+            background-color: #28a745;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
+        .holiday-name {
+            font-size: 0.92rem;
+            color: #ced4da;
+            margin: 4px 0 6px 0;
+        }
+        .bridge-tip {
+            font-size: 0.86rem;
+            background-color: #242424;
+            padding: 6px 9px;
+            border-radius: 4px;
+            color: #e9ecef;
+            line-height: 1.4;
+        }
+        .bridge-highlight {
+            color: #4dabf7;
+            font-weight: bold;
+        }
+        .bridge-weekend {
+            color: #adb5bd;
+            font-style: italic;
         }
     </style>
 </head>
@@ -146,8 +285,15 @@
 
     <div class="container">
         <label for="fecha-ingreso-input">Fecha de Ingreso:</label>
-        <input type="date" id="fecha-ingreso-input" value="2022-04-19"> 
-        <button onclick="calcularVacaciones()">Calcular Días</button>
+        <input type="date" id="fecha-ingreso-input" value="2022-04-19" onchange="calcularVacaciones()"> 
+
+        <label for="salario-diario-input">Salario Diario (Opcional - Prima Vacacional 50%):</label>
+        <input type="number" id="salario-diario-input" placeholder="Ej. 500.00" step="0.01" min="0" oninput="calcularVacaciones()">
+
+        <div class="button-group">
+            <button onclick="calcularVacaciones()">Calcular Días</button>
+            <button type="button" class="btn-secondary" onclick="abrirModalFestivos()">📅 Festivos y Puentes</button>
+        </div>
     </div>
 
     <div id="resultados" class="result-box">
@@ -164,6 +310,19 @@
             <div id="accumulation-dates"></div>
         </div>
     </div>
+
+    <!-- MODAL DE DÍAS FESTIVOS Y PUENTES -->
+    <div id="festivos-modal" class="modal-overlay" onclick="cerrarModalPorFondo(event)">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-festivos-titulo">
+            <div class="modal-header">
+                <h3 id="modal-festivos-titulo">Días Festivos y Puentes</h3>
+                <button type="button" class="modal-close" onclick="cerrarModalFestivos()" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="modal-body" id="festivos-modal-body">
+                <!-- Contenido generado dinámicamente -->
+            </div>
+        </div>
+    </div>
     
     <script>
         // Tablas de días de vacaciones iniciales (hasta el Año 5)
@@ -176,18 +335,23 @@
         };
         
         const FECHA_REFORMA = new Date(Date.UTC(2023, 0, 1));
+        const PORCENTAJE_PRIMA = 0.50; // 50% de prima vacacional
+
+        const NOMBRES_DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const NOMBRES_MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
         /* --- Funciones de lógica de vacaciones --- */
 
         function calcularDiasVacacionesFTL(anioServicioActual, diasBaseInicial) {
             if (anioServicioActual <= 5) return diasBaseInicial;
-            const aniosQuinquenales = anioServicioActual - 5; 
-            const bloquesQuinquenales = Math.floor(aniosQuinquenales / 5);
+            // Art. 76 LFT: +2 días a partir del 6.º año y posteriormente cada 5 años (6-10: 22, 11-15: 24, etc.)
+            const aniosDespuesDeCinco = anioServicioActual - 5; 
+            const bloquesQuinquenales = Math.ceil(aniosDespuesDeCinco / 5);
             const diasAdicionales = bloquesQuinquenales * 2;
             return diasBaseInicial + diasAdicionales;
         }
 
-        /* --- Funciones de utilidad de fechas --- */
+        /* --- Funciones de utilidad de fechas y moneda --- */
 
         function createUtcDate(year, month, day) {
             return new Date(Date.UTC(year, month, day));
@@ -207,11 +371,20 @@
         }
         
         function formatDateForList(date) {
-            // Formato D/M/YYYY
             const day = date.getUTCDate();
             const month = date.getUTCMonth() + 1;
             const year = date.getUTCFullYear();
             return `${day}/${month}/${year}`;
+        }
+
+        function formatShortDate(date) {
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = NOMBRES_MESES[date.getUTCMonth()];
+            return `${day}/${month}`;
+        }
+
+        function formatCurrencyMXN(amount) {
+            return amount.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
         }
 
         function dateDiffInDays(date1, date2) {
@@ -222,6 +395,152 @@
         function determinarTablaDias(fechaIngreso) {
             return (fechaIngreso.getTime() >= FECHA_REFORMA.getTime()) ? DIAS_POST_2023 : DIAS_PRE_2023;
         }
+
+        /* --- Lógica de Días Festivos Oficiales (Art. 74 LFT) y Puentes --- */
+
+        function obtenerEnesimoLunesMes(year, monthIndex, n) {
+            const primerDiaMes = createUtcDate(year, monthIndex, 1);
+            const diaSemana = primerDiaMes.getUTCDay(); // 0 = Dom, 1 = Lun...
+            const desplazamientoPrimerLunes = (1 - diaSemana + 7) % 7;
+            const diaObjetivo = 1 + desplazamientoPrimerLunes + (n - 1) * 7;
+            return createUtcDate(year, monthIndex, diaObjetivo);
+        }
+
+        function obtenerFestivosMexico(year) {
+            const festivos = [
+                { fecha: createUtcDate(year, 0, 1), nombre: 'Año Nuevo' },
+                { fecha: obtenerEnesimoLunesMes(year, 1, 1), nombre: 'Día de la Constitución (en conmemoración del 5 de feb.)' },
+                { fecha: obtenerEnesimoLunesMes(year, 2, 3), nombre: 'Natalicio de Benito Juárez (en conmemoración del 21 de mar.)' },
+                { fecha: createUtcDate(year, 4, 1), nombre: 'Día del Trabajo' },
+                { fecha: createUtcDate(year, 8, 16), nombre: 'Día de la Independencia de México' }
+            ];
+
+            // Transmisión del Poder Ejecutivo Federal: 1 de octubre cada 6 años a partir de 2024
+            if (year >= 2024 && (year - 2024) % 6 === 0) {
+                festivos.push({
+                    fecha: createUtcDate(year, 9, 1),
+                    nombre: 'Transmisión del Poder Ejecutivo Federal'
+                });
+            }
+
+            festivos.push(
+                { fecha: obtenerEnesimoLunesMes(year, 10, 3), nombre: 'Revolución Mexicana (en conmemoración del 20 de nov.)' },
+                { fecha: createUtcDate(year, 11, 25), nombre: 'Navidad' }
+            );
+
+            return festivos;
+        }
+
+        function generarSugerenciaPuente(fechaUtc) {
+            const diaSemana = fechaUtc.getUTCDay(); // 0 Dom, 1 Lun, 2 Mar, 3 Mié, 4 Jue, 5 Vie, 6 Sáb
+
+            switch (diaSemana) {
+                case 1: { // Lunes
+                    const viernesPrevio = formatShortDate(addDays(fechaUtc, -3));
+                    const martesSiguiente = formatShortDate(addDays(fechaUtc, 1));
+                    return `✅ <span class="bridge-highlight">Puente oficial de 3 días</span> (Sáb–Lun).<br>💡 <strong>Extensión:</strong> Pide el <strong>viernes ${viernesPrevio}</strong> o <strong>martes ${martesSiguiente}</strong> (1 día = <strong>4 días libres</strong>).`;
+                }
+                case 2: { // Martes
+                    const lunesPuente = formatShortDate(addDays(fechaUtc, -1));
+                    return `🔥 <span class="bridge-highlight">¡Super puente!</span> Pide el <strong>lunes ${lunesPuente}</strong> (1 día de vacaciones = <strong>4 días seguidos</strong> de descanso).`;
+                }
+                case 3: { // Miércoles
+                    const lun = formatShortDate(addDays(fechaUtc, -2));
+                    const mar = formatShortDate(addDays(fechaUtc, -1));
+                    const jue = formatShortDate(addDays(fechaUtc, 1));
+                    const vie = formatShortDate(addDays(fechaUtc, 2));
+                    return `⚡ <span class="bridge-highlight">Mega puente (5 días):</span> Pide <strong>lun ${lun} y mar ${mar}</strong>, o bien <strong>jue ${jue} y vie ${vie}</strong> (2 días = <strong>5 días libres</strong>).`;
+                }
+                case 4: { // Jueves
+                    const viernesPuente = formatShortDate(addDays(fechaUtc, 1));
+                    return `🔥 <span class="bridge-highlight">¡Super puente!</span> Pide el <strong>viernes ${viernesPuente}</strong> (1 día de vacaciones = <strong>4 días seguidos</strong> de descanso).`;
+                }
+                case 5: { // Viernes
+                    const juevesPrevio = formatShortDate(addDays(fechaUtc, -1));
+                    const lunesSiguiente = formatShortDate(addDays(fechaUtc, 3));
+                    return `✅ <span class="bridge-highlight">Puente oficial de 3 días</span> (Vie–Dom).<br>💡 <strong>Extensión:</strong> Pide el <strong>jueves ${juevesPrevio}</strong> o <strong>lunes ${lunesSiguiente}</strong> (1 día = <strong>4 días libres</strong>).`;
+                }
+                default: // Sábado (6) o Domingo (0)
+                    return `<span class="bridge-weekend">Cae en fin de semana (sin puente natural adicional).</span>`;
+            }
+        }
+
+        function renderizarModalFestivos() {
+            const hoy = new Date();
+            const anioActual = hoy.getFullYear();
+            const hoyUtc = createUtcDate(anioActual, hoy.getMonth(), hoy.getDate());
+            const festivos = obtenerFestivosMexico(anioActual);
+
+            document.getElementById('modal-festivos-titulo').innerText = `Festivos Oficiales y Puentes ${anioActual}`;
+
+            let proximoEncontrado = false;
+            let html = `<p class="modal-note">Descansos obligatorios conforme al Art. 74 de la LFT y combinaciones sugeridas (considerando descanso sábado y domingo):</p>`;
+
+            festivos.forEach(item => {
+                const esPasado = item.fecha.getTime() < hoyUtc.getTime();
+                let claseCard = '';
+                let badgeHtml = '';
+                let idHtml = '';
+
+                if (esPasado) {
+                    claseCard = 'past';
+                } else if (!proximoEncontrado) {
+                    proximoEncontrado = true;
+                    claseCard = 'upcoming';
+                    badgeHtml = `<span class="badge-next">Próximo festivo</span>`;
+                    idHtml = `id="proximo-festivo-card"`;
+                }
+
+                const nombreDia = NOMBRES_DIAS[item.fecha.getUTCDay()];
+                const fechaTexto = `${nombreDia} ${formatDateForDisplay(item.fecha)}`;
+                const sugerencia = generarSugerenciaPuente(item.fecha);
+
+                html += `
+                    <div ${idHtml} class="holiday-card ${claseCard}">
+                        <div class="holiday-top">
+                            <span class="holiday-date">${fechaTexto}</span>
+                            ${badgeHtml}
+                        </div>
+                        <div class="holiday-name">${item.nombre}</div>
+                        <div class="bridge-tip">${sugerencia}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('festivos-modal-body').innerHTML = html;
+        }
+
+        function abrirModalFestivos() {
+            renderizarModalFestivos();
+            const modal = document.getElementById('festivos-modal');
+            modal.classList.add('active');
+
+            // Centrar automáticamente el próximo día festivo dentro del modal
+            setTimeout(() => {
+                const body = document.getElementById('festivos-modal-body');
+                const nextCard = document.getElementById('proximo-festivo-card');
+                if (body && nextCard) {
+                    const targetScroll = nextCard.offsetTop - (body.clientHeight / 2) + (nextCard.clientHeight / 2);
+                    body.scrollTop = Math.max(0, targetScroll);
+                }
+            }, 100);
+        }
+
+        function cerrarModalFestivos() {
+            document.getElementById('festivos-modal').classList.remove('active');
+        }
+
+        function cerrarModalPorFondo(event) {
+            if (event.target.id === 'festivos-modal') {
+                cerrarModalFestivos();
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                cerrarModalFestivos();
+            }
+        });
 
         /**
          * Calcula, genera la lista y RESALTA la próxima fecha de acumulación.
@@ -242,15 +561,14 @@
                 const fechaAcumulacion = addDays(fechaInicioPeriodo, diasParaAcumular);
                 
                 let className = '';
+                let idAttr = '';
                 if (!isNextFound && fechaAcumulacion.getTime() >= hoyUtc.getTime()) {
                     className = 'next-accumulation';
+                    idAttr = 'id="next-day-item"';
                     isNextFound = true;
                 }
                 
-                // Generamos el <span> para la línea
-                const lineContent = `<span class="${className}">${formatDateForList(fechaAcumulacion)} - Día ${i}°</span>`;
-
-                // Añadimos el contenido y el salto de línea HTML (<br>)
+                const lineContent = `<span ${idAttr} class="${className}">${formatDateForList(fechaAcumulacion)} - Día ${i}°</span>`;
                 outputHtml += lineContent + '<br>';
             }
             
@@ -258,20 +576,32 @@
         }
 
         /**
-         * Maneja el despliegue del panel de información adicional.
+         * Maneja el despliegue del panel de información adicional y centra el próximo día.
          */
         function toggleDetails() {
             const detailDiv = document.getElementById('vacation-detail');
             const iconSpan = document.getElementById('toggle-icon');
             detailDiv.classList.toggle('open');
-            iconSpan.innerText = detailDiv.classList.contains('open') ? '▲' : '▼';
-        }
+            const isOpen = detailDiv.classList.contains('open');
+            iconSpan.innerText = isOpen ? '▲' : '▼';
 
+            if (isOpen) {
+                setTimeout(() => {
+                    const container = document.getElementById('accumulation-dates');
+                    const nextItem = document.getElementById('next-day-item');
+                    if (container && nextItem) {
+                        const targetScroll = nextItem.offsetTop - (container.clientHeight / 2) + (nextItem.clientHeight / 2);
+                        container.scrollTop = Math.max(0, targetScroll);
+                    }
+                }, 150);
+            }
+        }
 
         /* --- Lógica principal de cálculo --- */
 
         function calcularVacaciones() {
             const inputDateString = document.getElementById('fecha-ingreso-input').value;
+            const salarioDiario = parseFloat(document.getElementById('salario-diario-input').value);
 
             if (!inputDateString) {
                 document.getElementById('resultados').innerHTML = 'Por favor, introduce una fecha de ingreso válida.';
@@ -327,6 +657,18 @@
             const diasVacacionesGanados = diasVacaciones * porcentajeProgreso;
             const diasAcumularDia = (diasTotalesPeriodo / diasVacaciones);
             const diasPorDia = (diasVacaciones / diasTotalesPeriodo);
+
+            // 6.1 Cálculo de Prima Vacacional al 50% (si se ingresó salario diario)
+            let primaVacacionalHTML = '';
+            if (!isNaN(salarioDiario) && salarioDiario > 0) {
+                const primaTotalPeriodo = diasVacaciones * salarioDiario * PORCENTAJE_PRIMA;
+                const primaAcumuladaHoy = diasVacacionesGanados * salarioDiario * PORCENTAJE_PRIMA;
+                primaVacacionalHTML = `
+                    <hr style="border-top: 1px solid #555;">
+                    <p class="color_label"><strong>Prima vacacional proporcional (50%):</strong> <span style="font-size: 1.15em; color: #28a745;">${formatCurrencyMXN(primaAcumuladaHoy)}</span></p>
+                    <p class="color_label"><strong>Prima vacacional total del año (50%):</strong> <span style="color: #007bff;">${formatCurrencyMXN(primaTotalPeriodo)}</span></p>
+                `;
+            }
             
             // 7. Generación de la Barra de Progreso (HTML/CSS)
             const porcentajeFormato = (porcentajeProgreso * 100).toFixed(2);
@@ -352,6 +694,7 @@
                 <p class="color_label"><strong>Día de vacacion generado cada:</strong> ${diasAcumularDia.toFixed(2)} días</p>
                 <p class="color_label"><strong>Vacaciones actuales:</strong> <span style="font-size: 1.2em; color: #28a745;">${diasVacacionesGanados.toFixed(2)} días / ${diasVacaciones} días</span></p>
                 <p class="color_label"><strong>Días generados por día:</strong> <span style="font-size: 1em; color: #007bff;"> ${diasPorDia.toFixed(4)} días</span></p>
+                ${primaVacacionalHTML}
                 ${progressBarHtml}
             `;
 
