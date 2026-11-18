@@ -5,237 +5,420 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progreso Vacacional</title>
     <style>
-        /* Estilos Base y de Contenedor */
-        body {
-            font-family: Arial, sans-serif;
-            background: #1c1c1c;            
-            margin: 20px;
-            padding: 20px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            color: #dee2e6;              
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 5px;
-        }
-        .container {
-            color: #dee2e6;              
-            margin-bottom: 20px;
-        }
-        .result-box {
-            background-color: #2a2a2a;        /* Fondo más oscuro para caja de resultados */
-            border: 1px solid #dee2e6;
-            padding: 15px;
-            border-radius: 4px;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 25px;
-            background-color: #555; /* Fondo de la barra */
-            border-radius: 4px;
-            margin-top: 10px;
-            overflow: hidden;
-            border: 1px solid #ccc;
-        }
-        .progress-fill {
-            height: 100%;
-            background-color: #007bff;
-            text-align: center;
-            line-height: 25px;
-            color: white;
-            font-weight: bold;
-            transition: width 0.5s;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        input[type="date"],
-        input[type="number"] {
-            padding: 8px;
-            width: 100%;
+        /* Reset y Estilos Base (Mobile-First) */
+        *, *::before, *::after {
             box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #444; /* color de fondo del input */
-            color: #dee2e6;
-            margin-top: 4px;
-        }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .btn-secondary {
-            background-color: #343a40;
-            border: 1px solid #007bff;
-            color: #dee2e6;
-        }
-        .btn-secondary:hover {
-            background-color: #007bff;
-            color: #ffffff;
-        }
-        .color_label {
-            color: #dee2e6;            
         }
 
-        /* ESTILOS PARA EL DESPLEGABLE */
-        .toggle-section {
-            margin-top: 15px;
-            cursor: pointer;
-            color: #007bff; /* Color llamativo para el botón */
-            font-weight: bold;
+        :root {
+            --bg-body: #141414;
+            --bg-card: #222222;
+            --bg-subcard: #2c2c2c;
+            --bg-input: #333333;
+            --border-color: #444444;
+            --text-primary: #f1f3f5;
+            --text-secondary: #adb5bd;
+            --accent-blue: #0d6efd;
+            --accent-blue-hover: #0b5ed7;
+            --accent-green: #28a745;
+            --accent-amber: #ffc107;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            margin: 0 auto;
+            padding: 16px 12px 32px 12px;
+            max-width: 560px;
+            font-size: 15px;
+            line-height: 1.45;
+        }
+
+        h2 {
+            color: var(--text-primary);
+            font-size: 1.35rem;
+            margin: 0 0 14px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-blue);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid #555;
-            padding-top: 10px;
-            user-select: none; /* Evita que se seleccione el texto */
         }
 
-        .toggle-section:hover {
+        .badge-sim {
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: rgba(255, 193, 7, 0.18);
+            color: var(--accent-amber);
+            border: 1px solid var(--accent-amber);
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+        }
+
+        /* Controles y Formularios */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        input[type="date"],
+        input[type="number"] {
+            width: 100%;
+            min-height: 42px;
+            padding: 8px 10px;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--bg-input);
+            color: var(--text-primary);
+        }
+
+        input[type="date"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .input-inline-group {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .input-inline-group input[type="date"] {
+            flex: 1;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        button {
+            min-height: 42px;
+            background-color: var(--accent-blue);
+            color: #ffffff;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--accent-blue-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-subcard);
+            border: 1px solid var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--accent-blue);
             color: #ffffff;
         }
 
-        .vacation-detail {
-            max-height: 0;
+        .btn-full {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-today {
+            background-color: var(--bg-subcard);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0 14px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .btn-today:hover {
+            border-color: var(--accent-blue);
+            background-color: var(--bg-input);
+        }
+
+        /* Filas de Resultados (Tipografía Uniforme) */
+        .section-divider {
+            border: 0;
+            border-top: 1px solid var(--border-color);
+            margin: 12px 0;
+        }
+
+        .section-subtitle {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            padding: 5px 0;
+            font-size: 0.92rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+        }
+
+        .metric-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .val-blue {
+            color: #4dabf7;
+            font-weight: 700;
+        }
+
+        .val-green {
+            color: #40c057;
+            font-weight: 700;
+        }
+
+        .val-amber {
+            color: var(--accent-amber);
+            font-weight: 700;
+        }
+
+        .uma-note {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+
+        /* Barra de Progreso */
+        .progress-wrapper {
+            margin-top: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background-color: var(--bg-input);
+            border-radius: 6px;
             overflow: hidden;
-            transition: max-height 0.4s ease-in-out;
-            padding-top: 0;
+            border: 1px solid var(--border-color);
         }
-        
-        .vacation-detail.open {
-            max-height: 500px; /* Suficiente espacio para el contenido */
-            padding-top: 10px;
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-blue);
+            text-align: center;
+            line-height: 22px;
+            color: #ffffff;
+            font-size: 0.82rem;
+            font-weight: 700;
+            transition: width 0.4s ease;
         }
-        
+
+        /* Lista de Acumulación (Dentro del Modal de Información) */
         #accumulation-dates {
             position: relative;
-            max-height: 200px;
+            max-height: 210px;
             overflow-y: auto;
-            background: #3a3a3a;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            line-height: 1.8;
-            font-size: 0.95rem;
-            color: #e0e0e0;
+            background: var(--bg-subcard);
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            color: var(--text-primary);
             text-align: center;
-            white-space: normal;
             scroll-behavior: smooth;
         }
-        
-        /* ✨ ESTILO PARA RESALTAR EL PRÓXIMO DÍA ✨ */
+
+        .acc-item {
+            display: block;
+            padding: 5px 8px;
+            border-radius: 4px;
+            margin-bottom: 3px;
+        }
+
         .next-accumulation {
-            color: #e0e0e0;
-            font-weight: bold;
-            background-color: #007bff;
-            padding: 2px 5px;
-            border-radius: 3px;
-            display: inline-block;
-            width: 90%;
-            margin: 0 auto;
+            color: #ffffff;
+            font-weight: 700;
+            background-color: var(--accent-blue);
             border: 1px solid #ffffff;
         }
 
-        /* ✨ ESTILOS DEL MODAL DE FESTIVOS Y PUENTES ✨ */
+        /* Tabla de Proyección a 5 Años */
+        .projection-wrapper {
+            margin-top: 16px;
+            overflow-x: auto;
+        }
+
+        .projection-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background-color: var(--bg-subcard);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .projection-table th,
+        .projection-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .projection-table th {
+            background-color: var(--bg-input);
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+        }
+
+        .projection-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Estilos Compartidos de Modales */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background-color: rgba(0, 0, 0, 0.78);
+            background-color: rgba(0, 0, 0, 0.82);
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            padding: 15px;
+            padding: 12px;
         }
+
         .modal-overlay.active {
             display: flex;
         }
+
         .modal-content {
-            background-color: #2a2a2a;
-            border: 1px solid #dee2e6;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             width: 100%;
-            max-width: 540px;
-            max-height: 85vh;
+            max-width: 520px;
+            max-height: 88vh;
             display: flex;
             flex-direction: column;
-            color: #dee2e6;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            color: var(--text-primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
         }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 18px;
-            border-bottom: 2px solid #007bff;
+            gap: 8px;
+            padding: 12px 14px;
+            border-bottom: 2px solid var(--accent-blue);
         }
+
+        .modal-header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .modal-header h3 {
             margin: 0;
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             color: #ffffff;
         }
+
+        .year-select {
+            background-color: var(--bg-input);
+            color: #ffffff;
+            border: 1px solid var(--accent-blue);
+            border-radius: 5px;
+            padding: 5px 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
         .modal-close {
             background: transparent;
             border: none;
-            color: #dee2e6;
-            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 1.6rem;
+            min-height: auto;
             line-height: 1;
             padding: 0 6px;
-            cursor: pointer;
         }
+
         .modal-close:hover {
             background: transparent;
             color: #ff6b6b;
         }
+
         .modal-body {
-            padding: 15px;
+            padding: 12px 14px;
             overflow-y: auto;
             scroll-behavior: smooth;
         }
+
         .modal-note {
-            font-size: 0.85rem;
-            color: #adb5bd;
-            margin-top: 0;
-            margin-bottom: 12px;
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            margin: 0 0 12px 0;
         }
+
         .holiday-card {
-            background-color: #363636;
-            border-left: 4px solid #007bff;
-            border-radius: 5px;
+            background-color: var(--bg-subcard);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 6px;
             padding: 10px 12px;
             margin-bottom: 10px;
         }
+
         .holiday-card.past {
             opacity: 0.55;
             border-left-color: #6c757d;
         }
+
         .holiday-card.upcoming {
-            border-left-color: #28a745;
-            border: 1px solid #28a745;
+            border: 1px solid var(--accent-green);
             border-left-width: 5px;
-            background-color: #2f3b32;
+            background-color: #233227;
         }
+
         .holiday-top {
             display: flex;
             justify-content: space-between;
@@ -243,71 +426,131 @@
             gap: 8px;
             flex-wrap: wrap;
         }
+
         .holiday-date {
-            font-weight: bold;
+            font-weight: 700;
             color: #ffffff;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
         }
+
         .badge-next {
-            background-color: #28a745;
+            background-color: var(--accent-green);
             color: #ffffff;
-            font-size: 0.75rem;
-            font-weight: bold;
-            padding: 2px 7px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
             border-radius: 10px;
         }
+
         .holiday-name {
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             color: #ced4da;
-            margin: 4px 0 6px 0;
+            margin: 4px 0 8px 0;
         }
+
         .bridge-tip {
-            font-size: 0.86rem;
-            background-color: #242424;
-            padding: 6px 9px;
-            border-radius: 4px;
+            font-size: 0.84rem;
+            background-color: #1c1c1c;
+            padding: 8px 10px;
+            border-radius: 5px;
             color: #e9ecef;
-            line-height: 1.4;
+            line-height: 1.45;
         }
+
         .bridge-highlight {
             color: #4dabf7;
-            font-weight: bold;
+            font-weight: 700;
         }
+
         .bridge-weekend {
-            color: #adb5bd;
+            color: var(--text-secondary);
             font-style: italic;
+        }
+
+        .btn-simulate-holiday {
+            margin-top: 8px;
+            width: 100%;
+            min-height: 36px;
+            padding: 6px 10px;
+            font-size: 0.83rem;
+            background-color: var(--bg-input);
+            border: 1px solid var(--accent-blue);
+            color: #ffffff;
+        }
+
+        .btn-simulate-holiday:hover {
+            background-color: var(--accent-blue);
+        }
+
+        @media (max-width: 380px) {
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+            .metric-row {
+                font-size: 0.88rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <h2>Vacaciones</h2>
+    <h2>
+        <span>Vacaciones</span>
+        <span id="sim-badge" class="badge-sim" style="display: none;">Modo Simulación</span>
+    </h2>
 
-    <div class="container">
-        <label for="fecha-ingreso-input">Fecha de Ingreso:</label>
-        <input type="date" id="fecha-ingreso-input" value="2022-04-19" onchange="calcularVacaciones()"> 
+    <div class="card">
+        <div class="form-group">
+            <label for="fecha-ingreso-input">Fecha de Ingreso:</label>
+            <input type="date" id="fecha-ingreso-input" value="2022-04-19" onchange="calcularVacaciones()"> 
+        </div>
 
-        <label for="salario-diario-input">Salario Diario (Opcional - Prima Vacacional 50%):</label>
-        <input type="number" id="salario-diario-input" placeholder="Ej. 500.00" step="0.01" min="0" oninput="calcularVacaciones()">
+        <div class="form-group">
+            <label for="fecha-simulacion-input">Calcular / Simular progreso a la fecha:</label>
+            <div class="input-inline-group">
+                <input type="date" id="fecha-simulacion-input" onchange="calcularVacaciones()">
+                <button type="button" class="btn-today" onclick="restablecerFechaHoy()">Hoy</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="salario-diario-input">Salario Diario (Opcional - Prima 50% e ISR):</label>
+            <input type="number" id="salario-diario-input" placeholder="Ej. 500.00" step="0.01" min="0" oninput="calcularVacaciones()">
+        </div>
 
         <div class="button-group">
-            <button onclick="calcularVacaciones()">Calcular Días</button>
+            <button type="button" onclick="calcularVacaciones()">Calcular Días</button>
             <button type="button" class="btn-secondary" onclick="abrirModalFestivos()">📅 Festivos y Puentes</button>
         </div>
     </div>
 
-    <div id="resultados" class="result-box">
+    <div id="resultados" class="card">
         Presiona "Calcular Días" para ver el progreso.
     </div>
     
-    <div id="additional-info-container" class="result-box" style="margin-top: 15px; display: none;">
-        <div class="toggle-section" onclick="toggleDetails()">
-            + Información:
-            <span id="toggle-icon">▼</span>
-        </div>
-        
-        <div id="vacation-detail" class="vacation-detail">
-            <div id="accumulation-dates"></div>
+    <!-- BOTÓN PARA ABRIR EL MODAL DE INFORMACIÓN Y PROYECCIÓN -->
+    <div id="additional-info-container" style="display: none;">
+        <button type="button" class="btn-secondary btn-full" onclick="abrirModalInfo()">
+            <span>+ Información y Proyección (5 años)</span>
+        </button>
+    </div>
+
+    <!-- MODAL DE INFORMACIÓN Y PROYECCIÓN -->
+    <div id="info-modal" class="modal-overlay" onclick="cerrarModalPorFondo(event)">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-info-titulo">
+            <div class="modal-header">
+                <h3 id="modal-info-titulo">Detalle y Proyección (5 años)</h3>
+                <button type="button" class="modal-close" onclick="cerrarModalInfo()" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="modal-body" id="info-modal-body">
+                <p class="section-subtitle">Fechas de acumulación del período</p>
+                <div id="accumulation-dates"></div>
+
+                <div class="projection-wrapper">
+                    <p class="section-subtitle">Proyección próximos 5 años (Art. 76 LFT)</p>
+                    <div id="projection-table-container"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -315,7 +558,10 @@
     <div id="festivos-modal" class="modal-overlay" onclick="cerrarModalPorFondo(event)">
         <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-festivos-titulo">
             <div class="modal-header">
-                <h3 id="modal-festivos-titulo">Días Festivos y Puentes</h3>
+                <div class="modal-header-title-group">
+                    <h3 id="modal-festivos-titulo">Festivos Oficiales</h3>
+                    <select id="selector-anio-festivos" class="year-select" aria-label="Seleccionar año" onchange="cambiarAnioFestivos(this.value)"></select>
+                </div>
                 <button type="button" class="modal-close" onclick="cerrarModalFestivos()" aria-label="Cerrar">&times;</button>
             </div>
             <div class="modal-body" id="festivos-modal-body">
@@ -336,6 +582,8 @@
         
         const FECHA_REFORMA = new Date(Date.UTC(2023, 0, 1));
         const PORCENTAJE_PRIMA = 0.50; // 50% de prima vacacional
+        const UMA_DIARIA_2026 = 117.31; // UMA vigente 2026 (INEGI)
+        const TOPE_EXENTO_UMA = 15 * UMA_DIARIA_2026; // 15 UMAs exentas de ISR (Art. 93 LISR)
 
         const NOMBRES_DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
         const NOMBRES_MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
@@ -351,10 +599,32 @@
             return diasBaseInicial + diasAdicionales;
         }
 
+        function obtenerDiasPorAnioServicio(anioServicio, diasPorAnioTabla) {
+            if (anioServicio <= 5) {
+                return diasPorAnioTabla[anioServicio];
+            }
+            return calcularDiasVacacionesFTL(anioServicio, diasPorAnioTabla[5]);
+        }
+
         /* --- Funciones de utilidad de fechas y moneda --- */
 
         function createUtcDate(year, month, day) {
             return new Date(Date.UTC(year, month, day));
+        }
+
+        function getTodayIsoLocal() {
+            const hoy = new Date();
+            const y = hoy.getFullYear();
+            const m = String(hoy.getMonth() + 1).padStart(2, '0');
+            const d = String(hoy.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function dateUtcToIso(dateUtc) {
+            const y = dateUtc.getUTCFullYear();
+            const m = String(dateUtc.getUTCMonth() + 1).padStart(2, '0');
+            const d = String(dateUtc.getUTCDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
         }
         
         function addDays(date, days) {
@@ -465,16 +735,27 @@
             }
         }
 
-        function renderizarModalFestivos() {
+        function inicializarSelectorAnioFestivos(anioActual) {
+            const select = document.getElementById('selector-anio-festivos');
+            select.innerHTML = '';
+            for (let y = anioActual - 1; y <= anioActual + 5; y++) {
+                const option = document.createElement('option');
+                option.value = y;
+                option.textContent = y;
+                if (y === anioActual) option.selected = true;
+                select.appendChild(option);
+            }
+        }
+
+        function renderizarModalFestivos(anioSeleccionado) {
             const hoy = new Date();
             const anioActual = hoy.getFullYear();
+            const anioObjetivo = Number(anioSeleccionado) || anioActual;
             const hoyUtc = createUtcDate(anioActual, hoy.getMonth(), hoy.getDate());
-            const festivos = obtenerFestivosMexico(anioActual);
-
-            document.getElementById('modal-festivos-titulo').innerText = `Festivos Oficiales y Puentes ${anioActual}`;
+            const festivos = obtenerFestivosMexico(anioObjetivo);
 
             let proximoEncontrado = false;
-            let html = `<p class="modal-note">Descansos obligatorios conforme al Art. 74 de la LFT y combinaciones sugeridas (considerando descanso sábado y domingo):</p>`;
+            let html = `<p class="modal-note">Descansos obligatorios <strong>${anioObjetivo}</strong> (Art. 74 LFT) y combinaciones sugeridas (descanso sábado y domingo):</p>`;
 
             festivos.forEach(item => {
                 const esPasado = item.fecha.getTime() < hoyUtc.getTime();
@@ -484,7 +765,7 @@
 
                 if (esPasado) {
                     claseCard = 'past';
-                } else if (!proximoEncontrado) {
+                } else if (!proximoEncontrado && anioObjetivo === anioActual) {
                     proximoEncontrado = true;
                     claseCard = 'upcoming';
                     badgeHtml = `<span class="badge-next">Próximo festivo</span>`;
@@ -493,7 +774,12 @@
 
                 const nombreDia = NOMBRES_DIAS[item.fecha.getUTCDay()];
                 const fechaTexto = `${nombreDia} ${formatDateForDisplay(item.fecha)}`;
+                const fechaIso = dateUtcToIso(item.fecha);
                 const sugerencia = generarSugerenciaPuente(item.fecha);
+
+                const botonSimular = !esPasado
+                    ? `<button type="button" class="btn-simulate-holiday" onclick="simularDesdeFestivo('${fechaIso}')">Simular días acumulados a esta fecha</button>`
+                    : '';
 
                 html += `
                     <div ${idHtml} class="holiday-card ${claseCard}">
@@ -503,27 +789,64 @@
                         </div>
                         <div class="holiday-name">${item.nombre}</div>
                         <div class="bridge-tip">${sugerencia}</div>
+                        ${botonSimular}
                     </div>
                 `;
             });
 
-            document.getElementById('festivos-modal-body').innerHTML = html;
+            const body = document.getElementById('festivos-modal-body');
+            body.innerHTML = html;
+
+            setTimeout(() => {
+                const nextCard = document.getElementById('proximo-festivo-card');
+                if (nextCard) {
+                    const targetScroll = nextCard.offsetTop - (body.clientHeight / 2) + (nextCard.clientHeight / 2);
+                    body.scrollTop = Math.max(0, targetScroll);
+                } else {
+                    body.scrollTop = 0;
+                }
+            }, 80);
+        }
+
+        function simularDesdeFestivo(fechaIso) {
+            document.getElementById('fecha-simulacion-input').value = fechaIso;
+            cerrarModalFestivos();
+            calcularVacaciones();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restablecerFechaHoy() {
+            document.getElementById('fecha-simulacion-input').value = getTodayIsoLocal();
+            calcularVacaciones();
+        }
+
+        function cambiarAnioFestivos(anioSeleccionado) {
+            renderizarModalFestivos(anioSeleccionado);
+        }
+
+        /* --- Control de Modales --- */
+
+        function abrirModalInfo() {
+            document.getElementById('info-modal').classList.add('active');
+            setTimeout(() => {
+                const container = document.getElementById('accumulation-dates');
+                const nextItem = document.getElementById('next-day-item');
+                if (container && nextItem) {
+                    const targetScroll = nextItem.offsetTop - (container.clientHeight / 2) + (nextItem.clientHeight / 2);
+                    container.scrollTop = Math.max(0, targetScroll);
+                }
+            }, 80);
+        }
+
+        function cerrarModalInfo() {
+            document.getElementById('info-modal').classList.remove('active');
         }
 
         function abrirModalFestivos() {
-            renderizarModalFestivos();
-            const modal = document.getElementById('festivos-modal');
-            modal.classList.add('active');
-
-            // Centrar automáticamente el próximo día festivo dentro del modal
-            setTimeout(() => {
-                const body = document.getElementById('festivos-modal-body');
-                const nextCard = document.getElementById('proximo-festivo-card');
-                if (body && nextCard) {
-                    const targetScroll = nextCard.offsetTop - (body.clientHeight / 2) + (nextCard.clientHeight / 2);
-                    body.scrollTop = Math.max(0, targetScroll);
-                }
-            }, 100);
+            const anioActual = new Date().getFullYear();
+            inicializarSelectorAnioFestivos(anioActual);
+            renderizarModalFestivos(anioActual);
+            document.getElementById('festivos-modal').classList.add('active');
         }
 
         function cerrarModalFestivos() {
@@ -533,20 +856,21 @@
         function cerrarModalPorFondo(event) {
             if (event.target.id === 'festivos-modal') {
                 cerrarModalFestivos();
+            } else if (event.target.id === 'info-modal') {
+                cerrarModalInfo();
             }
         }
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 cerrarModalFestivos();
+                cerrarModalInfo();
             }
         });
 
-        /**
-         * Calcula, genera la lista y RESALTA la próxima fecha de acumulación.
-         */
-        function mostrarFechasAcumulacion(fechaInicioPeriodo, diasVacacionesTotales, diasTotalesPeriodo) {
-            const hoyUtc = createUtcDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+        /* --- Funciones de Detalle y Proyección --- */
+
+        function mostrarFechasAcumulacion(fechaInicioPeriodo, diasVacacionesTotales, diasTotalesPeriodo, fechaReferenciaUtc) {
             const diasAcumularUnDia = diasTotalesPeriodo / diasVacacionesTotales;
             let outputHtml = '';
             let isNextFound = false;
@@ -560,48 +884,73 @@
                 const diasParaAcumular = Math.round(diasAcumularUnDia * i);
                 const fechaAcumulacion = addDays(fechaInicioPeriodo, diasParaAcumular);
                 
-                let className = '';
+                let className = 'acc-item';
                 let idAttr = '';
-                if (!isNextFound && fechaAcumulacion.getTime() >= hoyUtc.getTime()) {
-                    className = 'next-accumulation';
+                if (!isNextFound && fechaAcumulacion.getTime() >= fechaReferenciaUtc.getTime()) {
+                    className += ' next-accumulation';
                     idAttr = 'id="next-day-item"';
                     isNextFound = true;
                 }
                 
-                const lineContent = `<span ${idAttr} class="${className}">${formatDateForList(fechaAcumulacion)} - Día ${i}°</span>`;
-                outputHtml += lineContent + '<br>';
+                outputHtml += `<span ${idAttr} class="${className}">${formatDateForList(fechaAcumulacion)} — Día ${i}°</span>`;
             }
             
             document.getElementById("accumulation-dates").innerHTML = outputHtml;
         }
 
-        /**
-         * Maneja el despliegue del panel de información adicional y centra el próximo día.
-         */
-        function toggleDetails() {
-            const detailDiv = document.getElementById('vacation-detail');
-            const iconSpan = document.getElementById('toggle-icon');
-            detailDiv.classList.toggle('open');
-            const isOpen = detailDiv.classList.contains('open');
-            iconSpan.innerText = isOpen ? '▲' : '▼';
+        function renderizarTablaProyeccion(fechaIngreso, anioServicioActual, diasPorAnioTabla, salarioDiario) {
+            const mesIngreso = fechaIngreso.getUTCMonth();
+            const diaIngreso = fechaIngreso.getUTCDate();
+            const tieneSalario = !isNaN(salarioDiario) && salarioDiario > 0;
 
-            if (isOpen) {
-                setTimeout(() => {
-                    const container = document.getElementById('accumulation-dates');
-                    const nextItem = document.getElementById('next-day-item');
-                    if (container && nextItem) {
-                        const targetScroll = nextItem.offsetTop - (container.clientHeight / 2) + (nextItem.clientHeight / 2);
-                        container.scrollTop = Math.max(0, targetScroll);
-                    }
-                }, 150);
+            let html = `
+                <table class="projection-table">
+                    <thead>
+                        <tr>
+                            <th>Año</th>
+                            <th>Aniversario</th>
+                            <th>Días</th>
+                            ${tieneSalario ? '<th>Prima 50%</th>' : ''}
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (let offset = 0; offset < 5; offset++) {
+                const anioProyectado = anioServicioActual + offset;
+                const fechaAniv = createUtcDate(fechaIngreso.getUTCFullYear() + anioProyectado - 1, mesIngreso, diaIngreso);
+                const diasCorrespondientes = obtenerDiasPorAnioServicio(anioProyectado, diasPorAnioTabla);
+                const primaMonto = diasCorrespondientes * salarioDiario * PORCENTAJE_PRIMA;
+
+                html += `
+                    <tr>
+                        <td><strong>${anioProyectado}°</strong></td>
+                        <td>${formatDateForDisplay(fechaAniv)}</td>
+                        <td class="val-blue">${diasCorrespondientes} d</td>
+                        ${tieneSalario ? `<td class="val-green">${formatCurrencyMXN(primaMonto)}</td>` : ''}
+                    </tr>
+                `;
             }
+
+            html += `</tbody></table>`;
+            document.getElementById('projection-table-container').innerHTML = html;
         }
 
         /* --- Lógica principal de cálculo --- */
 
         function calcularVacaciones() {
             const inputDateString = document.getElementById('fecha-ingreso-input').value;
+            const simDateInput = document.getElementById('fecha-simulacion-input');
             const salarioDiario = parseFloat(document.getElementById('salario-diario-input').value);
+
+            const hoyIso = getTodayIsoLocal();
+            if (!simDateInput.value) {
+                simDateInput.value = hoyIso;
+            }
+
+            const simDateString = simDateInput.value;
+            const esSimulacion = simDateString !== hoyIso;
+            document.getElementById('sim-badge').style.display = esSimulacion ? 'inline-block' : 'none';
 
             if (!inputDateString) {
                 document.getElementById('resultados').innerHTML = 'Por favor, introduce una fecha de ingreso válida.';
@@ -609,41 +958,40 @@
                 return;
             }
             
-            // 1. Inicialización de la Fecha de Ingreso y componentes (en UTC)
+            // 1. Inicialización de Fechas en UTC
             const [year, month, day] = inputDateString.split('-').map(Number);
             const fechaIngreso = createUtcDate(year, month - 1, day); 
-            
             const mesIngreso = month - 1; 
             const diaIngreso = day;
-            
-            const hoy = new Date();
-            const hoyUtc = createUtcDate(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+
+            const [simY, simM, simD] = simDateString.split('-').map(Number);
+            const fechaRefUtc = createUtcDate(simY, simM - 1, simD);
+
+            if (fechaRefUtc < fechaIngreso) {
+                document.getElementById('resultados').innerHTML = 'La fecha a simular no puede ser anterior a la fecha de ingreso.';
+                document.getElementById('additional-info-container').style.display = 'none';
+                return;
+            }
             
             const diasPorAnio = determinarTablaDias(fechaIngreso);
             
-            // 2. Determinar el año de servicio actual
-            let aniosServicio = hoyUtc.getFullYear() - fechaIngreso.getFullYear();
-            const aniversarioEsteAnio = createUtcDate(hoyUtc.getFullYear(), mesIngreso, diaIngreso);
-            if (hoyUtc < aniversarioEsteAnio) aniosServicio -= 1;
+            // 2. Determinar el año de servicio en la fecha de referencia
+            let aniosServicio = fechaRefUtc.getUTCFullYear() - fechaIngreso.getUTCFullYear();
+            const aniversarioEsteAnio = createUtcDate(fechaRefUtc.getUTCFullYear(), mesIngreso, diaIngreso);
+            if (fechaRefUtc < aniversarioEsteAnio) aniosServicio -= 1;
             aniosServicio = Math.max(0, aniosServicio); 
 
-            // 3. Definir fechas y días
+            // 3. Definir fechas del período
             const anioServicioActual = aniosServicio + 1;
-            const fechaAniversarioPasado = createUtcDate(fechaIngreso.getFullYear() + aniosServicio, mesIngreso, diaIngreso);
-            const siguienteAniversario = createUtcDate(fechaIngreso.getFullYear() + anioServicioActual, mesIngreso, diaIngreso);
+            const fechaAniversarioPasado = createUtcDate(fechaIngreso.getUTCFullYear() + aniosServicio, mesIngreso, diaIngreso);
+            const siguienteAniversario = createUtcDate(fechaIngreso.getUTCFullYear() + anioServicioActual, mesIngreso, diaIngreso);
             const fechaFinPeriodo = new Date(siguienteAniversario.getTime() - (1000 * 60 * 60 * 24)); 
 
             // 4. Días de Vacaciones Totales
-            let diasVacaciones;
-            const diasBaseQuinquenal = diasPorAnio[5]; 
-            if (anioServicioActual <= 5) {
-                diasVacaciones = diasPorAnio[anioServicioActual];
-            } else {
-                diasVacaciones = calcularDiasVacacionesFTL(anioServicioActual, diasBaseQuinquenal);
-            }
+            const diasVacaciones = obtenerDiasPorAnioServicio(anioServicioActual, diasPorAnio);
 
             // 5. Cálculos del Período
-            const diasTranscurridosPeriodo = dateDiffInDays(hoyUtc, fechaAniversarioPasado);
+            const diasTranscurridosPeriodo = dateDiffInDays(fechaRefUtc, fechaAniversarioPasado);
             const diasTotalesPeriodo = dateDiffInDays(fechaFinPeriodo, fechaAniversarioPasado) + 1; 
             
             if (diasTotalesPeriodo <= 0) {
@@ -653,47 +1001,100 @@
             }
 
             // 6. Cálculo del progreso y pro-rateo
-            const porcentajeProgreso = Math.min(1, diasTranscurridosPeriodo / diasTotalesPeriodo);
+            const porcentajeProgreso = Math.min(1, Math.max(0, diasTranscurridosPeriodo / diasTotalesPeriodo));
             const diasVacacionesGanados = diasVacaciones * porcentajeProgreso;
             const diasAcumularDia = (diasTotalesPeriodo / diasVacaciones);
             const diasPorDia = (diasVacaciones / diasTotalesPeriodo);
 
-            // 6.1 Cálculo de Prima Vacacional al 50% (si se ingresó salario diario)
+            // 6.1 Cálculo de Prima Vacacional al 50% + Desglose Exento/Gravado ISR (Art. 93 LISR)
             let primaVacacionalHTML = '';
             if (!isNaN(salarioDiario) && salarioDiario > 0) {
                 const primaTotalPeriodo = diasVacaciones * salarioDiario * PORCENTAJE_PRIMA;
-                const primaAcumuladaHoy = diasVacacionesGanados * salarioDiario * PORCENTAJE_PRIMA;
+                const primaAcumuladaRef = diasVacacionesGanados * salarioDiario * PORCENTAJE_PRIMA;
+                const primaExentaISR = Math.min(primaTotalPeriodo, TOPE_EXENTO_UMA);
+                const primaGravadaISR = Math.max(0, primaTotalPeriodo - TOPE_EXENTO_UMA);
+
                 primaVacacionalHTML = `
-                    <hr style="border-top: 1px solid #555;">
-                    <p class="color_label"><strong>Prima vacacional proporcional (50%):</strong> <span style="font-size: 1.15em; color: #28a745;">${formatCurrencyMXN(primaAcumuladaHoy)}</span></p>
-                    <p class="color_label"><strong>Prima vacacional total del año (50%):</strong> <span style="color: #007bff;">${formatCurrencyMXN(primaTotalPeriodo)}</span></p>
+                    <hr class="section-divider">
+                    <p class="section-subtitle">Prima Vacacional (50%) e ISR</p>
+                    <div class="metric-row">
+                        <span class="metric-label">Prima proporcional acumulada:</span>
+                        <span class="metric-value val-green">${formatCurrencyMXN(primaAcumuladaRef)}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Prima total del año (50%):</span>
+                        <span class="metric-value val-blue">${formatCurrencyMXN(primaTotalPeriodo)}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Monto exento de ISR (15 UMAs):</span>
+                        <span class="metric-value val-green">${formatCurrencyMXN(primaExentaISR)}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Excedente gravado (sujeto a ISR):</span>
+                        <span class="metric-value ${primaGravadaISR > 0 ? 'val-amber' : ''}">${formatCurrencyMXN(primaGravadaISR)}</span>
+                    </div>
+                    <p class="uma-note">* Tope exento Art. 93 LISR: ${formatCurrencyMXN(TOPE_EXENTO_UMA)} (15 UMAs × $${UMA_DIARIA_2026} MXN).</p>
                 `;
             }
             
-            // 7. Generación de la Barra de Progreso (HTML/CSS)
+            // 7. Generación de la Barra de Progreso
             const porcentajeFormato = (porcentajeProgreso * 100).toFixed(2);
-            
             const progressBarHtml = `
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${porcentajeFormato}%;">
-                        ${porcentajeFormato}%
+                <div class="progress-wrapper">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${porcentajeFormato}%;">
+                            ${porcentajeFormato}%
+                        </div>
                     </div>
                 </div>
             `;
             
-            // 8. Formato de Salida
+            // 8. Formato de Salida Uniforme
             const formatoFechaDisplay = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+            const etiquetaFechaCorte = esSimulacion ? `Fecha simulada (${formatDateForDisplay(fechaRefUtc)})` : 'Hoy';
 
             const resultadosHTML = `
-                <p class="color_label"><strong>Fecha de Ingreso:</strong> ${fechaIngreso.toLocaleDateString('es-ES', formatoFechaDisplay)}</p>
-                <p class="color_label"><strong>Año de antigüedad en curso:</strong> ${anioServicioActual}</p>
-                <p class="color_label"><strong>Vacaciones para este año:</strong> <span style="font-size: 1.2em; color: #007bff;">${diasVacaciones} días</span></p>
-                <hr style="border-top: 1px solid #555;">
-                <p class="color_label"><strong>Período Actual:</strong> ${formatDateForDisplay(fechaAniversarioPasado)} a ${formatDateForDisplay(fechaFinPeriodo)}</p>
-                <p class="color_label"><strong>Días Transcurridos:</strong> ${diasTranscurridosPeriodo} de ${diasTotalesPeriodo}</p>
-                <p class="color_label"><strong>Día de vacacion generado cada:</strong> ${diasAcumularDia.toFixed(2)} días</p>
-                <p class="color_label"><strong>Vacaciones actuales:</strong> <span style="font-size: 1.2em; color: #28a745;">${diasVacacionesGanados.toFixed(2)} días / ${diasVacaciones} días</span></p>
-                <p class="color_label"><strong>Días generados por día:</strong> <span style="font-size: 1em; color: #007bff;"> ${diasPorDia.toFixed(4)} días</span></p>
+                <p class="section-subtitle">Resumen de Antigüedad</p>
+                <div class="metric-row">
+                    <span class="metric-label">Fecha de ingreso:</span>
+                    <span class="metric-value">${fechaIngreso.toLocaleDateString('es-ES', formatoFechaDisplay)}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Fecha de corte:</span>
+                    <span class="metric-value ${esSimulacion ? 'val-amber' : ''}">${etiquetaFechaCorte}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Año de antigüedad en curso:</span>
+                    <span class="metric-value">${anioServicioActual}° año</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Vacaciones del período:</span>
+                    <span class="metric-value val-blue">${diasVacaciones} días</span>
+                </div>
+
+                <hr class="section-divider">
+                <p class="section-subtitle">Progreso del Período Actual</p>
+                <div class="metric-row">
+                    <span class="metric-label">Período:</span>
+                    <span class="metric-value">${formatDateForDisplay(fechaAniversarioPasado)} - ${formatDateForDisplay(fechaFinPeriodo)}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Días transcurridos:</span>
+                    <span class="metric-value">${diasTranscurridosPeriodo} de ${diasTotalesPeriodo} días</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">1 día generado cada:</span>
+                    <span class="metric-value">${diasAcumularDia.toFixed(2)} días</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Acumulación diaria:</span>
+                    <span class="metric-value val-blue">${diasPorDia.toFixed(4)} días / día</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Vacaciones acumuladas:</span>
+                    <span class="metric-value val-green">${diasVacacionesGanados.toFixed(2)} / ${diasVacaciones} días</span>
+                </div>
+
                 ${primaVacacionalHTML}
                 ${progressBarHtml}
             `;
@@ -701,13 +1102,16 @@
             document.getElementById('resultados').innerHTML = resultadosHTML;
             document.getElementById('additional-info-container').style.display = 'block';
 
-            // 9. Generación de Fechas de Acumulación
-            mostrarFechasAcumulacion(fechaAniversarioPasado, diasVacaciones, diasTotalesPeriodo);
+            // 9. Generación de Fechas de Acumulación y Tabla de Proyección
+            mostrarFechasAcumulacion(fechaAniversarioPasado, diasVacaciones, diasTotalesPeriodo, fechaRefUtc);
+            renderizarTablaProyeccion(fechaIngreso, anioServicioActual, diasPorAnio, salarioDiario);
         }
 
-        // Ejecutar al cargar la página con la fecha por defecto
-        document.addEventListener('DOMContentLoaded', calcularVacaciones);
-
+        // Ejecutar al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fecha-simulacion-input').value = getTodayIsoLocal();
+            calcularVacaciones();
+        });
     </script>
 </body>
 </html>
